@@ -1,2 +1,7 @@
 # Prometheus-and-Grafana-DevOps-Essentials
-Monitoring and observability essentials using Prometheus and Grafana in one place.
+## If I'll find any other feature to be useful - it'll surely be added!
+## How it works?
+## Basics
+## Prometheus - scaping, monitoring, alerts
+## Grafana - vizualization
+## Logstash - log aggregation
