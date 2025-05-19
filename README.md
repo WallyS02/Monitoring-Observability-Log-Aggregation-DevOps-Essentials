@@ -1,23 +1,35 @@
 # Monitoring-Observability-Log-Aggregation-DevOps-Essentials
 ## If I'll find any other feature to be useful - it'll surely be added!
-## How it works?
+## What is it?
 Monitoring is a systematic collection and analysis of data \(e.g. metrics\) in real time to assess the health of infrastructure, applications and services. It's purpose is detection of occurring issues \(e.g. server crashes, CPU limit exceeded\) and rapid response. Example of Monitoring tool is Prometheus.
 
-Observability is an ability to understand the state of a system based on its outputs: metrics, logs, and traces. It's purpose is complex debugging of systems and applications. Example of a tool linked to observability is Grafana - visualization tool that allows for correlating data.
+Observability is an ability to understand the state of a system based on its outputs: metrics, logs and traces. It's purpose is complex debugging of systems and applications. Example of a tool linked to observability is Grafana - visualization tool that allows for correlating data.
 
 Log Aggregation is a centralization and processing of logs from various sources \(servers, applications, containers\) in one place. It's purpose is improving analysis, search, and event correlation \(e.g. tracking transactions across microservices\). Example of Log Aggregation tool is Loki.
-## Basics
 ## Metrics
 ### Golden Signals
 ## Alerts
 ## Log Aggregation
 ## SLA/SLO/SLI
 ## Prometheus
+Prometheus is a monitoring tool that scrapes metrics from applications and infrastructure by HTTP requests \(e.g. from ```/metrics``` endpoint\). \
+Tool uses Time-Series Database \(TSDB\) that stores data in time series format \(e.g. http_requests_total{status="200"} 1500 @ timestamp\). \
+Metrics are labeled \(e.g. instance, job, env\), which allows filtering and grouping. \
+Prometheus uses PromQL - Metrics Analysis Query Language. \
+To export data from monitored resources tool uses Exporters. \
+To manage alerts Prometheus uses Alertmanager.
 ### Exporters
 ### PromQL
 ## Grafana
+Grafana is a visualization tool \(metrics, logs and traces\) in form of panels and dashboards. \
+It uses Data Sources to collect source data for its plots. \
+It visualises alerts from sources. \
 ### Data sources
 ### Panels and dashboards
 ## Loki
+Loki is a log aggregation tool that uses agents \(named Promtail\) to send it data collected by them from monitored sources. \
+Tool only indexes labels \(e.g. pod_name, namespace\), not log content – ​​saves resources. \
+Loki uses LogQL - PromQL-like query language. \
+Tool is integrated with Grafana.
 ### Promtail
 ### LogQL
