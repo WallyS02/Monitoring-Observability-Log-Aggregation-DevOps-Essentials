@@ -7,7 +7,17 @@ Observability is an ability to understand the state of a system based on its out
 
 Log Aggregation is a centralization and processing of logs from various sources \(servers, applications, containers\) in one place. It's purpose is improving analysis, search, and event correlation \(e.g. tracking transactions across microservices\). Example of Log Aggregation tool is Loki.
 ## Metrics
+Metrics are numerical data collected in real time, describing the state of the system \(e.g. CPU usage, number of HTTP requests, response time\). 
+
+They allow for detecting trends, anomalies and problems \(e.g. downtime, overloads\) and the basis for defining alerts and SLAs \(Service Level Agreements\).
 ### Golden Signals
+Golden Signals are key metrics recommended by Google SRE for monitoring any system:
+* **Latency** - request handling time
+* **Traffic** - system load \(e.g. number of requests per second\)
+* **Errors** - number of failed operations
+* **Saturation** - resource utilization \(e.g. CPU, memory\)
+
+They allow for quickly assessing the health of your system and are universal for all systems.
 ## Alerts
 ## Log Aggregation
 ## SLA/SLO/SLI
