@@ -19,6 +19,9 @@ Golden Signals are key metrics recommended by Google SRE for monitoring any syst
 
 They allow for quickly assessing the health of your system and are universal for all systems.
 ## Alerts
+Alerts are automatic notifications triggered when the system detects an anomaly \(e.g. high error rate, resource overload\) to quickly respond to issues before they impact end users.
+
+See how they are managed in different tools in below tools chapters.
 ## Log Aggregation
 ## SLA/SLO/SLI
 ## Prometheus
@@ -61,12 +64,78 @@ Most important functions and operators:
 * **Avoid ```rate()``` on gauges: ```rate()``` is for counters - use ```delta()``` for gauges**
 * **Optimize time ranges** - too short window \(e.g. [1m]\) → noise in the data, too long window \(e.g. [1h]\) → delays in detecting anomalies
 * **Optimize labels** - redundant labels slow down queries
+### Alerts
+Alerts are defined in ```prometheus.yml```. If condition is fulfilled, alert is sent to Alertmanager.
+
+Example alert:
+```
+groups:
+- name: <group_name>
+  rules:
+  - alert: <alert_name>
+    expr: <promql_query>
+    for: <time>  # Alert is triggered after <time>
+    labels:
+      severity: <severity>
+    annotations:
+      summary: <summary>
+      description: <description>
+```
+### Alertmanager
+Alertmanager is a tool that manages alerts in Prometheus.
+
+Alerts can be grouped by combining related alerts into one message \(e.g. 100 high CPU alerts in a cluster → one notification\). \
+Alerts can be inhibited when another, more important alert is active \(e.g. ignore CPU alerts if the entire cluster is offline\). \
+Alerts can be silenced temporarily \(e.g. during planned maintenance\). \
+Alert notifications can be routed to different receivers based on labels \(e.g. team=backend, env=prod\).
+
+Example Alertmanager configuration:
+```
+global: # Global settings
+  <key>: <value>
+
+route:
+  group_by: [<labels>] # Grouping by labels
+  group_wait: <time> # Wait <time> to collect related alerts
+  group_interval: <time> # Grouped Alert Sending Frequency
+  receiver: <receiver_name_1>
+  routes:
+  - match:
+      severity: <severity>
+    receiver: <receiver_name_2>
+
+receivers:
+- name: <receiver_name_1>
+  <receiver_configs>:
+  - <key>: <value>
+- name: <receiver_name_2>
+  <receiver_configs>:
+  - <key>: <value>
+
+inhibit_rules:
+- source_match: # Alert that invokes inhibition
+    severity: <source_severity>
+  target_match: # Alerts to inhibit
+    severity: <target_severity>        
+  equal: [<labels>]
+```
+To apply configuration in Prometheus add below to ```prometheus.yml```:
+```
+alerting:
+  alertmanagers:
+  - static_configs:
+      - targets: [<alertmanager_endpoint>]
+```
 ## Grafana
 Grafana is a visualization tool \(metrics, logs and traces\) in form of panels and dashboards. \
 It uses Data Sources to collect source data for its plots. \
 It visualises alerts from sources. \
 ### Data sources
 ### Panels and dashboards
+### Alerts
+Alerts can be based on any data source and be sent directly from Grafana \(without Alertmanager\).
+
+Define alerts in panel.
 ## Loki
 Loki is a log aggregation tool that uses agents \(named Promtail\) to send it data collected by them from monitored sources. \
 Tool only indexes labels \(e.g. pod_name, namespace\), not log content – ​​saves resources. \
@@ -74,3 +143,27 @@ Loki uses LogQL - PromQL-like query language. \
 Tool is integrated with Grafana.
 ### Promtail
 ### LogQL
+### Alerts
+Loki can send alerts to Alertmanager when it detects defined patterns in logs. Component that periodically evaluates rules is named Loki Ruler.
+
+Example rule:
+```
+groups:
+  - name: <group_name>
+    rules:
+      - alert: <alert_name>
+        expr: <logql_query>
+        for: <time>  # Alert is triggered after <time>
+        labels:
+          severity: <severity>
+        annotations:
+          summary: <summary>
+          description: <description>
+```
+To integrate Loki with Alertmanager use:
+```
+ruler:
+  alertmanager_url: <alertmanager_endpoint>
+  external_url: <loki_endpoint>
+  rule_path: <path_to_rules>
+```
