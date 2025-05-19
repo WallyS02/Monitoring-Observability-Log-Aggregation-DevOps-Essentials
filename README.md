@@ -246,6 +246,41 @@ subjects:
   namespace: <namespace>
 ```
 ### LogQL
+LogQL is a query language inspired by PromQL, but adapted to work with logs in Loki. It allows for:
+* filtering logs by labels and content
+* parsing structured data \(e.g. JSON)
+* aggregating logs into metrics \(e.g. errors per minute\)
+* correlating logs with Prometheus metrics in Grafana
+
+LogQL query consists of:
+* **Log Stream Selector** - selecting log streams based on labels
+* **Pipeline** - log processing \(filtering, parsing, aggregation\)
+
+Example query:
+```
+{<key>=<value>} # Log Stream Selector
+  |= "error" # Filter \(only logs with "error"\)
+  | json # Parse logs in JSON format
+  | latency > 1000 # Filter records with latency field > 1000ms
+  | rate() # Calculate the number of errors per second
+```
+
+Log Stream Selector operators:
+* ```=``` - equal
+* ```!=``` - not equal
+* ```=~``` - match regex
+* ```!~``` - not match regex
+
+Pipeline filters operators:
+* ```|=``` - equal
+* ```!=``` - not equal
+* ```|~``` - match regex
+* ```!~``` - not match regex
+
+Pipeline aggregations:
+* **rate()** - number of logs per unit of time \(e.g. per second\)
+* **count_over_time()** - total number of logs in the time interval
+* **sum(), avg(), max()** - aggregations by selected fields
 ### Alerts
 Loki can send alerts to Alertmanager when it detects defined patterns in logs. Component that periodically evaluates rules is named Loki Ruler.
 
