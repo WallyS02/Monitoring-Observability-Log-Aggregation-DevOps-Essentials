@@ -23,6 +23,19 @@ Alerts are automatic notifications triggered when the system detects an anomaly 
 
 See how they are managed in different tools in below tools chapters.
 ## SLA/SLO/SLI
+SLA \(Service Level Agreement\) is a contract with the customer that specifies a guaranteed level of service \(e.g. 99.9% availability\). Failure to meet this level may result in penalties.
+
+SLO \(Service Level Objective\) is an internal technical goal that helps meet an SLA \(e.g., 99.95% availability goal\). Usually more ambitious than the SLA.
+
+SLI \(Service Level Indicator\) is a metric that measures a specific aspect of a service \(e.g. availability, response time, number of errors\).
+
+First, you need to define SLI, which reflects the user experience \(Prometheus and Loki can be used\). \
+Then you need to define a formula to calculate SLO based on SLIs and visualize its value \(Prometheus and Grafana can be used\). \
+It is worth creating an alert that will send notification when the SLO is violated. \
+Create SLA reports based on SLO.
+
+To measure level of fulfillment of SLO you can define Error Budget - the allowable number of errors \(or unavailability\) you can "spend" on to stay within the SLO. Example:
+* SLO: 99.9% availability per month (30 days) → Error Budget: 0.1% * 30 days = 43.2 minutes of available downtime
 ## Prometheus
 Prometheus is a monitoring tool that scrapes metrics from applications and infrastructure by HTTP requests \(e.g. from ```/metrics``` endpoint\). \
 Tool uses Time-Series Database \(TSDB\) that stores data in time series format \(e.g. http_requests_total{status="200"} 1500 @ timestamp\). \
