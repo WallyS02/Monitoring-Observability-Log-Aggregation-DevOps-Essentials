@@ -131,6 +131,15 @@ Grafana is a visualization tool \(metrics, logs and traces\) in form of panels a
 It uses Data Sources to collect source data for its plots. \
 It visualises alerts from sources. \
 ### Data sources
+Data sources are connections to an external data storage system \(e.g. Prometheus, Loki, database\) from which Grafana retrieves information for visualization on dashboards.
+
+To define data source use:
+```
+Type: <type>
+URL: <data_source_url>
+Access: <access>
+Auth: <auth> # If needed
+```
 ### Panels and dashboards
 ### Alerts
 Alerts can be based on any data source and be sent directly from Grafana \(without Alertmanager\).
