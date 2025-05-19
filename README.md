@@ -128,7 +128,7 @@ alerting:
 ## Grafana
 Grafana is a visualization tool \(metrics, logs and traces\) in form of panels and dashboards. \
 It uses Data Sources to collect source data for its plots. \
-It visualises alerts from sources. \
+It visualises alerts from sources.
 ### Data sources
 Data sources are connections to an external data storage system \(e.g. Prometheus, Loki, database\) from which Grafana retrieves information for visualization on dashboards.
 
@@ -159,6 +159,92 @@ Tool only indexes labels \(e.g. pod_name, namespace\), not log content – ​�
 Loki uses LogQL - PromQL-like query language. \
 Tool is integrated with Grafana.
 ### Promtail
+Promtail is a logging agent designed to work with Loki. It monitors log files \(e.g. /var/log/*.log\) or container streams in Kubernetes, adds metadata \(labels\) to logs that Loki uses for indexing and sends logs to Loki in a LogQL compatible format.
+
+Example configuration of Promtail:
+```
+server:
+  http_listen_port: <port>  # Healthcheck port
+
+clients:
+  - url: <loki_address>
+
+scrape_configs:
+- job_name: <job_name>
+  kubernetes_sd_configs: # Automatic pod detection
+  - role: pod
+  relabel_configs:
+  - source_labels: [__meta_kubernetes_namespace]
+    target_label: namespace
+  - action: replace
+    replacement: /var/log/pods/*.log
+    target_label: __path__
+```
+
+DeamonSet from Kubernetes is perfect for Promtail. Example configuration:
+```
+apiVersion: apps/<api_version>
+kind: DaemonSet
+metadata:
+  name: <daemon_set_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  selector:
+    matchLabels:
+      name: <daemon_set_name>
+  template:
+    metadata:
+      labels:
+        name: <daemon_set_name>
+    spec:
+      containers:
+      - name: <container_name>
+        image: grafana/promtail:latest
+        args:
+        - -config.file=<path_to_config>
+        volumeMounts:
+        - name: logs
+          mountPath: /var/log
+        - name: config
+          mountPath: <path_to_config>
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log
+      - name: config
+        configMap:
+          name: <promtail_config>
+```
+Promtail needs permissions to read k8s metadata:
+```
+apiVersion: <api_version>
+kind: ServiceAccount
+metadata:
+  name: promtail
+---
+apiVersion: rbac.authorization.k8s.io/<api_version>
+kind: ClusterRole
+metadata:
+  name: promtail
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "pods"]
+  verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/<api_version>
+kind: ClusterRoleBinding
+metadata:
+  name: promtail
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: promtail
+subjects:
+- kind: ServiceAccount
+  name: promtail
+  namespace: <namespace>
+```
 ### LogQL
 ### Alerts
 Loki can send alerts to Alertmanager when it detects defined patterns in logs. Component that periodically evaluates rules is named Loki Ruler.
