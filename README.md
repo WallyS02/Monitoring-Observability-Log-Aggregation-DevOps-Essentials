@@ -29,6 +29,16 @@ Prometheus uses PromQL - Metrics Analysis Query Language. \
 To export data from monitored resources tool uses Exporters. \
 To manage alerts Prometheus uses Alertmanager.
 ### Exporters
+Exporters are special tools \(or libraries\) that collect metrics from systems, applications or protocols that do not support the native Prometheus format, and expose them in a format that Prometheus understands \(OpenMetrics\). \
+Examples of data sources:
+* operating systems \(e.g. CPU, disk usage\)
+* databases \(e.g. PostgreSQL, Redis\)
+* cloud services \(e.g. AWS S3\)
+* protocols \(e.g. HTTP, ICMP\)
+
+First, Exporters collect the data, then transform it into Prometheus format, then make it available via an HTTP endpoint for periodic scraping by Prometheus.
+
+There are many ready-made exporters \(e.g. Node Exporter for OS metrics, Blackbox Exporter for monitoring services availability\) but you can create your own exporter using Prometheus libraries. Check for ready-made exporters [here](https://prometheus.io/docs/instrumenting/exporters/).
 ### PromQL
 ## Grafana
 Grafana is a visualization tool \(metrics, logs and traces\) in form of panels and dashboards. \
