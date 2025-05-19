@@ -22,7 +22,6 @@ They allow for quickly assessing the health of your system and are universal for
 Alerts are automatic notifications triggered when the system detects an anomaly \(e.g. high error rate, resource overload\) to quickly respond to issues before they impact end users.
 
 See how they are managed in different tools in below tools chapters.
-## Log Aggregation
 ## SLA/SLO/SLI
 ## Prometheus
 Prometheus is a monitoring tool that scrapes metrics from applications and infrastructure by HTTP requests \(e.g. from ```/metrics``` endpoint\). \
@@ -141,6 +140,15 @@ Access: <access>
 Auth: <auth> # If needed
 ```
 ### Panels and dashboards
+Panels are single dashboard components \(e.g. chart, table, statistics\) that displays data based on a query to the source. \
+Dashboards are sets of panels that visualize data from various sources \(Prometheus, Loki, databases, etc.\).
+
+Panels can be of types:
+* **Time Series** - visualization of metrics over time \(e.g. resource usage, number of requests\)
+* **Stat** - displaying a single value \(e.g. current number of errors, average response time\)
+* **Table** - table with structured data \(e.g. SQL query results\)
+* **Heatmap** - visualization of the distribution of values ​​\(e.g. response time percentiles\)
+* **Logs** - displaying logs \(from Loki, Elasticsearch, etc.\) with filtering options
 ### Alerts
 Alerts can be based on any data source and be sent directly from Grafana \(without Alertmanager\).
 
