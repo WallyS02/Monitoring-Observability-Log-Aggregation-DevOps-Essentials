@@ -40,6 +40,27 @@ First, Exporters collect the data, then transform it into Prometheus format, the
 
 There are many ready-made exporters \(e.g. Node Exporter for OS metrics, Blackbox Exporter for monitoring services availability\) but you can create your own exporter using Prometheus libraries. Check for ready-made exporters [here](https://prometheus.io/docs/instrumenting/exporters/).
 ### PromQL
+PromQL is a query language used in Prometheus to retrieve time series metrics, transform and aggregate data \(e.g., calculate averages, sums, percentiles\) and create alerts and dashboards \(e.g., in Grafana\).
+
+Metrics are used in form name + labels \(e.g. ```http_requests_total{status=<status>, path=<path>}```\). Labels can be used with logic operators \(e.g. ```!=, =~```\). \
+For metrics data, a time interval from which data is to be retrieved can be specified \(e.g. ```rate(http_requests_total[5m])``` - average requests per second over the last 5 minutes\). \
+Metrics can be of types:
+* **Counter** - growing value \(e.g. number of requests\)
+* **Gauge** - momentary value \(e.g. CPU usage\)
+* **Histogram/Summary** - distribution of values ​\(e.g. response time\)
+
+Most important functions and operators:
+* **rate()** - calculates the increment per second for counters \(e.g. requests/sec\)
+* **increase()** - calculates the total growth in a given time window
+* **sum() by()** - aggregates values ​​and groups by labels
+* **histogram_quantile()** - calculates percentiles for histograms \(e.g. \<x\>th percentile of response time\)
+* **avg(), min(), max()** - basic statistical functions
+* **time(), timestamp()** - current time in seconds and samples timestamp
+
+#### Best practises
+* **Avoid ```rate()``` on gauges: ```rate()``` is for counters - use ```delta()``` for gauges**
+* **Optimize time ranges** - too short window \(e.g. [1m]\) → noise in the data, too long window \(e.g. [1h]\) → delays in detecting anomalies
+* **Optimize labels** - redundant labels slow down queries
 ## Grafana
 Grafana is a visualization tool \(metrics, logs and traces\) in form of panels and dashboards. \
 It uses Data Sources to collect source data for its plots. \
