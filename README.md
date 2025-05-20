@@ -193,71 +193,7 @@ scrape_configs:
     replacement: /var/log/pods/*.log
     target_label: __path__
 ```
-
-DeamonSet from Kubernetes is perfect for Promtail. Example configuration:
-```
-apiVersion: apps/<api_version>
-kind: DaemonSet
-metadata:
-  name: <daemon_set_name>
-  labels:
-    <label_name>: <label_value>
-spec:
-  selector:
-    matchLabels:
-      name: <daemon_set_name>
-  template:
-    metadata:
-      labels:
-        name: <daemon_set_name>
-    spec:
-      containers:
-      - name: <container_name>
-        image: grafana/promtail:latest
-        args:
-        - -config.file=<path_to_config>
-        volumeMounts:
-        - name: logs
-          mountPath: /var/log
-        - name: config
-          mountPath: <path_to_config>
-      volumes:
-      - name: logs
-        hostPath:
-          path: /var/log
-      - name: config
-        configMap:
-          name: <promtail_config>
-```
-Promtail needs permissions to read k8s metadata:
-```
-apiVersion: <api_version>
-kind: ServiceAccount
-metadata:
-  name: promtail
----
-apiVersion: rbac.authorization.k8s.io/<api_version>
-kind: ClusterRole
-metadata:
-  name: promtail
-rules:
-- apiGroups: [""]
-  resources: ["nodes", "pods"]
-  verbs: ["list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/<api_version>
-kind: ClusterRoleBinding
-metadata:
-  name: promtail
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: promtail
-subjects:
-- kind: ServiceAccount
-  name: promtail
-  namespace: <namespace>
-```
+**Promtail is now deprecated and Grafana Alloy should be used!**
 ### LogQL
 LogQL is a query language inspired by PromQL, but adapted to work with logs in Loki. It allows for:
 * filtering logs by labels and content
